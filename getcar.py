@@ -17,8 +17,9 @@ class CarBase:
         self.carrying = float(carrying)
 
     def get_photo_file_ext(self):
+
         ext = os.path.splitext(self.photo_file_name)[1]
-        #        print(ext)
+
         return ext
 
 
@@ -100,23 +101,26 @@ def get_car_list(csv_filename):
         for row in reader:
 
             try:
-                ip0 = 0
-                ip1 = 0
-                ip2 = 0
-                ip3 = 0
-                ip4 = 0
-                ip5 = 0
-                ip6 = 0
-                ip7 = 0
-                ind = 0
+                ip0 = 0             # verify  csv_car_type
+                ip1 = 0             # verify  csv_brand
+                ip2 = 0             # verify  csv_passenger_seats_count
+                ip3 = 0             # verify  csv_photo_file_name
+                ip4 = 0             # verify  csv_body_whl
+                ip5 = 0             # verify  csv_carrying
+                ip6 = 0             # verify  csv_extra
+                ip7 = 0             # verify  all elements in record
+                ind = 0             # verify  com result for create
                 car_type = ''
 
                 if len(row) == 7:
                     ip7 = 1
+
                     try:
+
                         car_type = row[CarBase.csv_car_type]
                         if car_type in ('car', 'truck', 'spec_machine'):
                             ip0 = 1
+
                     except Exception as err:
                         print('ERR CAR_TYPE    ', err)
 
@@ -147,7 +151,7 @@ def get_car_list(csv_filename):
                                 l, w, h = (float(c) for c in row[4].split('x', 2))
                             else:
                                 row[4] = '0.0x0.0x0.0'
-                            print(row[4])
+                            # print(row[4])
 
                         except Exception as err:
                             print('ERR BODY_WHL    ', err)
