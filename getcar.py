@@ -3,6 +3,7 @@ import os.path
 
 
 class CarBase:
+
     csv_car_type = 0
     csv_brand = 1
     csv_passenger_seats_count = 2
@@ -24,6 +25,7 @@ class CarBase:
 
 
 class Car(CarBase):
+
     car_type = 'car'
 
     def __init__(self, brand, photo_file_name, carrying, passenger_seats_count):
@@ -41,6 +43,7 @@ class Car(CarBase):
 
 
 class Truck(CarBase):
+
     car_type = 'truck'
 
     def __init__(self, brand, photo_file_name, carrying, body_whl):
@@ -48,7 +51,9 @@ class Truck(CarBase):
         self.body_whl = body_whl
 
         try:
+
             length, width, height = (float(c) for c in body_whl.split('x', 2))
+
         except ValueError:
             length, width, height = .0, .0, .0
 
@@ -57,6 +62,7 @@ class Truck(CarBase):
         self.body_height = height
 
     def get_body_volume(self):
+
         return self.body_width * self.body_height * self.body_length
 
     @classmethod
@@ -70,6 +76,7 @@ class Truck(CarBase):
 
 
 class SpecMachine(CarBase):
+
     car_type = 'spec_machine'
 
     def __init__(self, brand, photo_file_name, carrying, extra):
@@ -88,27 +95,25 @@ class SpecMachine(CarBase):
 
 def get_car_list(csv_filename):
 
-    with open(csv_filename) as csv_fd:    # , encoding='utf-8'
+    with open(csv_filename) as csv_fd:
 
         reader = csv.reader(csv_fd, delimiter=';')
-
         next(reader)
-
         car_list = []
-
         create_s = {car_class.car_type: car_class for car_class in (Car, Truck, SpecMachine)}
 
         for row in reader:
 
             try:
-                ip0 = 0             # verify  csv_car_type
-                ip1 = 0             # verify  csv_brand
-                ip2 = 0             # verify  csv_passenger_seats_count
-                ip3 = 0             # verify  csv_photo_file_name
-                ip4 = 0             # verify  csv_body_whl
-                ip5 = 0             # verify  csv_carrying
-                ip6 = 0             # verify  csv_extra
-                ip7 = 0             # verify  all elements in record
+
+                ip0 = 0             # verify  csv_car_type 0
+                ip1 = 0             # verify  csv_brand 1
+                ip2 = 0             # verify  csv_passenger_seats_count 2
+                ip3 = 0             # verify  csv_photo_file_name 3
+                ip4 = 0             # verify  csv_body_whl 4
+                ip5 = 0             # verify  csv_carrying 5
+                ip6 = 0             # verify  csv_extra 6
+                ip7 = 0             # verify  all elements in record 7
                 ind = 0             # verify  com result for create
                 car_type = ''
 
@@ -118,78 +123,102 @@ def get_car_list(csv_filename):
                     try:
 
                         car_type = row[CarBase.csv_car_type]
+
                         if car_type in ('car', 'truck', 'spec_machine'):
                             ip0 = 1
 
                     except Exception as err:
-                        print('ERR CAR_TYPE    ', err)
+                        print('ERROR in csv_car_type:  ', err)
 
                 if (ip7 == 1) & (ip0 == 1):
-                    if (row[1]) != '':
+
+                    if (row[CarBase.csv_brand]) != '':
                         ip1 = 1
 
                     if car_type == 'car':
+
                         try:
-                            if (row[2]) != '':
-                                if isinstance(int(row[2]), int):
+
+                            if (row[CarBase.csv_passenger_seats_count]) != '':
+
+                                if isinstance(int(row[CarBase.csv_passenger_seats_count]), int):
                                     ip2 = 1
+
                         except Exception as err:
-                            print('ERR 2    ', err)
+                            print('ERROR in csv_passenger_seats_count:  ', err)
 
                     try:
-                        if (os.path.splitext(row[3])[0]) != '':
 
-                            if os.path.splitext(row[3])[1] in ('.jpg', '.jpeg', '.png', '.gif'):
+                        if (os.path.splitext(row[CarBase.csv_photo_file_name])[0]) != '':
+
+                            if os.path.splitext(row[CarBase.csv_photo_file_name])[1] in ('.jpg', '.jpeg', '.png', '.gif'):
                                 ip3 = 1
+
                     except Exception as err:
-                        print('ERR EXTRA    ', err)
+                        print('ERROR in csv_photo_file_name:   ', err)
 
                     if car_type == 'truck':
                         ip4 = 1
+
                         try:
-                            if (row[4]) != '':
-                                l, w, h = (float(c) for c in row[4].split('x', 2))
+
+                            if (row[CarBase.csv_body_whl]) != '':
+                                l, w, h = (float(c) for c in row[CarBase.csv_body_whl].split('x', 2))
+
                             else:
-                                row[4] = '0.0x0.0x0.0'
-                            # print(row[4])
+                                row[CarBase.csv_body_whl] = '0.0x0.0x0.0'
 
                         except Exception as err:
-                            print('ERR BODY_WHL    ', err)
+                            print('ERROR in csv_body_whl:   ', err)
 
                     if car_type == 'spec_machine':
 
                         try:
-                            if (row[6]) != '':       # len(row[6]) > 0:
+
+                            if (row[CarBase.csv_extra]) != '':
                                 ip6 = 1
+
                         except Exception as err:
-                            print('ERR EXTRA    ', err)
+                            print('ERROR in csv_extra:   ', err)
 
                     try:
-                        if len(row[5]) != '':
-                            if isinstance(float(row[5]), float):
+
+                        if len(row[CarBase.csv_carrying]) != '':
+
+                            if isinstance(float(row[CarBase.csv_carrying]), float):
                                 ip5 = 1
+
                     except (ValueError, IndexError) as err:
-                        print('ERR CARRYING    ', err)
+                        print('ERROR in csv_carrying:   ', err)
 
                     if (car_type == 'car') & ((ip0 * ip1 * ip2 * ip3 * ip5 * ip7) == 1):
                         ind = 1
+
                     if (car_type == 'truck') & ((ip0 * ip1 * ip3 * ip4 * ip5 * ip7) == 1):
                         ind = 1
+
                     if (car_type == 'spec_machine') & ((ip0 * ip1 * ip3 * ip5 * ip6 * ip7) == 1):
                         ind = 1
+
                     if ind == 1:
-                        try:
-                            car_class = create_s[car_type]
-                        except Exception as err:
-                            print('ERR  CREATE', err)
 
                         try:
-                            car_list.append(car_class.instance(row))
+
+                            car_class = create_s[car_type]
+
                         except Exception as err:
-                            print('ERR APPEND    ', err)
+                            print('ERROR in car_class:   ', err)
+
+                        try:
+
+                            car_list.append(car_class.instance(row))
+
+                        except Exception as err:
+                            print('ERROR in machine append:    ', err)
 
             except Exception as err:
-                print('ERR    EOP   ', err)
+                print('ERROR in read next record of svc.file:   ', err)
 
         csv_fd.close()
+
     return car_list
